@@ -4,12 +4,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { UsersTable } from '../user/users-table';
-import { RoomsTable } from '../room/rooms-table';
-import { BookingsTable } from '../booking/bookings-table';
 import { SystemConfigForm } from './system-config';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Loader2, Hotel, CalendarCheck, Settings, LayoutDashboard, Menu, X, Moon, Sun, ArrowLeft, Home, UserCog } from 'lucide-react';
+import { LogOut, Loader2, Settings, LayoutDashboard, Menu, X, Moon, Sun, ArrowLeft, Home, UserCog } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +16,7 @@ import { LogoutConfirmationDialog } from '../ui/confirm-message';
 
 export function SuperAdmin() {
   const [activeSection, setActiveSection] = useState('dashboard');
-  const [navigationHistory, setNavigationHistory] = useState<string[]>(['dashboard']);
+  const [navigationHistory, setNavigationHistory] = useState(['dashboard']);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [theme, setTheme] = useState('light');
@@ -115,8 +113,6 @@ export function SuperAdmin() {
   const navItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { id: 'users', icon: UserCog, label: 'Users' },
-    { id: 'rooms', icon: Hotel, label: 'Rooms' },
-    { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
     { id: 'config', icon: Settings, label: 'Settings' },
   ];
 
@@ -134,32 +130,10 @@ export function SuperAdmin() {
                 <p className="text-xs text-blue-500 dark:text-blue-400">+12% from last month</p>
               </CardContent>
             </Card>
-            <Card className="bg-gradient-to-br from-blue-50 to-sky-100 dark:from-blue-900 dark:to-sky-800 hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-300">Available Rooms</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">86</div>
-                <p className="text-xs text-blue-500 dark:text-blue-400">+3 new this week</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-blue-50 to-sky-100 dark:from-blue-900 dark:to-sky-800 hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-300">Active Bookings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">247</div>
-                <p className="text-xs text-blue-500 dark:text-blue-400">+8% from last month</p>
-              </CardContent>
-            </Card>
           </div>
         );
       case 'users':
         return <UsersTable />;
-      case 'rooms':
-        return <RoomsTable />;
-      case 'bookings':
-        return <BookingsTable />;
       case 'config':
         return <SystemConfigForm />;
       default:

@@ -2,7 +2,7 @@
 
 import { Calendar, Home, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import LoginModal from '@/app/(protected)/sign-up/page';
+import LoginModal from '@/app/(auth)/login/page';
 import { useState } from 'react';
 import { useSessionStatus } from '@/hooks/session-status';
 import { useRouter } from 'next/navigation';

@@ -1,7 +1,7 @@
-import Header from '@/components/homePage/Header';
-import HeroSection from '@/components/homePage/HeroSection';
-import FeaturesSection from '@/components/homePage/FeaturesSection';
-import Footer from '@/components/homePage/Footer';
+import Header from '@/components/shared/Header';
+import HeroSection from '@/components/shared/HeroSection';
+import FeaturesSection from '@/components/shared/FeaturesSection';
+import Footer from '@/components/shared/Footer';
 
 export default function HomePage() {
   return (

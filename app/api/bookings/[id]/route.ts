@@ -5,7 +5,7 @@ import { and, eq, gte, lte, or, sql, ne } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-option';
 import { Booking, UpdateBookingInput } from '@/types/booking';
-//import { sendNotification } from '@/lib/notifications';
+import { sendNotification } from '@/lib/notifications';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -174,11 +174,11 @@ export async function PUT(request: Request, { params }: RouteParams) {
       ? `BOOKING_${status.toUpperCase()}` as 'BOOKING_PENDING' | 'BOOKING_APPROVED' | 'BOOKING_REJECTED' | 'BOOKING_CANCELLED'
       : 'BOOKING_MODIFIED';
 
-    // await sendNotification({
-    //   userId: session.user.id,
-    //   message: `Booking for room "${room.name}" has been updated.`,
-    //   type: notificationType,
-    // });
+    await sendNotification({
+      userId: session.user.id,
+      message: `Booking for room "${room.name}" has been updated.`,
+      type: notificationType,
+    });
 
     return NextResponse.json({
       success: true,
@@ -220,11 +220,11 @@ export async function DELETE(request: Request, { params }: RouteParams) {
 
     await db.delete(bookingsTable).where(whereClause);
 
-    // await sendNotification({
-    //   userId: session.user.id,
-    //   message: `Booking for room "${room.name}" has been cancelled.`,
-    //   type: 'BOOKING_CANCELLED',
-    // });
+    await sendNotification({
+      userId: session.user.id,
+      message: `Booking for room "${room.name}" has been cancelled.`,
+      type: 'BOOKING_CANCELLED',
+    });
 
     return NextResponse.json({
       success: true,

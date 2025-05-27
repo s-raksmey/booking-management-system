@@ -6,7 +6,7 @@ import { hashPassword, toUserResponse } from '@/lib/auth';
 import { CreateUserInput, UserRole, UserResponse } from '@/types/user';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-option';
-//import { sendNotification } from '@/lib/notifications';
+import { sendNotification } from '@/lib/notifications';
 
 export async function GET(request: Request) {
   try {
@@ -123,11 +123,11 @@ export async function POST(request: Request) {
       })
       .returning();
 
-    // await sendNotification({
-    //   userId,
-    //   message: `Your account has been created with role ${role}. Please log in with your email and password.`,
-    //   type: 'ACCOUNT_CREATED',
-    // });
+    await sendNotification({
+      userId,
+      message: `Your account has been created with role ${role}. Please log in with your email and password.`,
+      type: 'ACCOUNT_CREATED',
+    });
 
     return NextResponse.json(toUserResponse(newUser), { status: 201 });
   } catch (error) {

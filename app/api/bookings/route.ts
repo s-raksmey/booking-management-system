@@ -5,7 +5,7 @@ import { and, eq, gte, lte, or, sql } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-option';
 import { Booking, CreateBookingInput } from '@/types/booking';
-//import { sendNotification } from '@/lib/notifications';
+import { sendNotification } from '@/lib/notifications';
 
 export async function GET(request: Request) {
   try {
@@ -204,11 +204,11 @@ export async function POST(request: Request) {
       updatedAt: Number(newBooking.updatedAt),
     };
 
-    // await sendNotification({
-    //   userId: session.user.id,
-    //   message: `Booking for room "${room.name}" has been ${room.autoApprove ? 'created' : 'requested'}.`,
-    //   type: room.autoApprove ? 'BOOKING_APPROVED' : 'BOOKING_REQUEST',
-    // });
+    await sendNotification({
+      userId: session.user.id,
+      message: `Booking for room "${room.name}" has been ${room.autoApprove ? 'created' : 'requested'}.`,
+      type: room.autoApprove ? 'BOOKING_APPROVED' : 'BOOKING_REQUEST',
+    });
 
     return NextResponse.json({
       success: true,

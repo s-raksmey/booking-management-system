@@ -6,7 +6,7 @@ import { toUserResponse } from '@/lib/auth';
 import { UpdateUserInput } from '@/types/user';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-option';
-//import { sendNotification } from '@/lib/notifications';
+import { sendNotification } from '@/lib/notifications';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -70,13 +70,13 @@ export async function PUT(request: Request, { params }: RouteParams) {
       .where(eq(users.id, userId))
       .returning();
 
-    // if (isSuspended !== undefined && isSuspended !== existingUser.isSuspended) {
-    //   await sendNotification({
-    //     userId,
-    //     message: `Your account has been ${isSuspended ? 'suspended' : 'reactivated'}.`,
-    //     type: isSuspended ? 'ACCOUNT_SUSPENDED' : 'ACCOUNT_REACTIVATED',
-    //   });
-    // }
+    if (isSuspended !== undefined && isSuspended !== existingUser.isSuspended) {
+      await sendNotification({
+        userId,
+        message: `Your account has been ${isSuspended ? 'suspended' : 'reactivated'}.`,
+        type: isSuspended ? 'ACCOUNT_SUSPENDED' : 'ACCOUNT_REACTIVATED',
+      });
+    }
 
     return NextResponse.json(toUserResponse(updatedUser));
   } catch (error) {
@@ -110,11 +110,11 @@ export async function DELETE(request: Request, { params }: RouteParams) {
 
     await db.delete(users).where(eq(users.id, userId));
 
-    // await sendNotification({
-    //   userId,
-    //   message: 'Your account has been deleted.',
-    //   type: 'ACCOUNT_DELETED',
-    // });
+    await sendNotification({
+      userId,
+      message: 'Your account has been deleted.',
+      type: 'ACCOUNT_DELETED',
+    });
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

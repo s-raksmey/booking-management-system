@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { toUserResponse } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-option';
-//import { sendNotification } from '@/lib/notifications';
+import { sendNotification } from '@/lib/notifications';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -49,11 +49,11 @@ export async function PUT(request: Request, { params }: RouteParams) {
       .where(eq(users.id, userId))
       .returning();
 
-    // await sendNotification({
-    //   userId,
-    //   message: `Your account has been ${isSuspended ? 'suspended' : 'reactivated'}.`,
-    //   type: isSuspended ? 'ACCOUNT_SUSPENDED' : 'ACCOUNT_REACTIVATED',
-    // });
+    await sendNotification({
+      userId,
+      message: `Your account has been ${isSuspended ? 'suspended' : 'reactivated'}.`,
+      type: isSuspended ? 'ACCOUNT_SUSPENDED' : 'ACCOUNT_REACTIVATED',
+    });
 
     return NextResponse.json(toUserResponse(updatedUser));
   } catch (error) {

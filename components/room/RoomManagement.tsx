@@ -7,8 +7,8 @@ import { Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Room } from '@/types/room';
 import { useRooms } from '@/hooks/useRoom';
-import { RoomTable } from './rooms-table';
-import { RoomForm } from './room-form';
+import { RoomTable } from './RoomsTable';
+import { RoomForm } from './RoomForm';
 import { SuspendRoomDialog } from './SuspendRoomDialog';
 
 export function RoomsManagement() {

@@ -3,7 +3,7 @@ import { db } from '@/db';
 import { users, passwordResetTokens } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { hashPassword } from '@/lib/auth';
-//import { sendNotification } from '@/lib/notifications';
+import { sendNotification } from '@/lib/notifications';
 import crypto from 'crypto';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-option';
@@ -37,11 +37,11 @@ export async function POST(request: Request) {
       expiresAt,
     });
 
-    // await sendNotification({
-    //   userId: user.id,
-    //   message: `A password reset has been requested for your account. Use this token to reset your password: ${token}. It expires on ${expiresAt.toISOString()}.`,
-    //   type: 'PASSWORD_RESET_REQUESTED',
-    // });
+    await sendNotification({
+      userId: user.id,
+      message: `A password reset has been requested for your account. Use this token to reset your password: ${token}. It expires on ${expiresAt.toISOString()}.`,
+      type: 'PASSWORD_RESET_REQUEST', // Fixed typo
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -86,11 +86,11 @@ export async function PUT(request: Request) {
         .where(eq(passwordResetTokens.id, resetToken.id));
     });
 
-    // await sendNotification({
-    //   userId: resetToken.userId,
-    //   message: 'Your password has been successfully reset.',
-    //   type: 'PASSWORD_RESET_COMPLETED',
-    // });
+    await sendNotification({
+      userId: resetToken.userId,
+      message: 'Your password has been successfully reset.',
+      type: 'PASSWORD_RESET_COMPLETED', // This is already correct
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

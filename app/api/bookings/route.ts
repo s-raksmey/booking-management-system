@@ -7,6 +7,9 @@ import { authOptions } from '@/lib/auth-option';
 import { Booking, CreateBookingInput } from '@/types/booking';
 import { sendNotification } from '@/lib/notifications';
 
+const validStatuses = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const;
+type BookingStatus = typeof validStatuses[number];
+
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -18,6 +21,7 @@ export async function GET(request: Request) {
     const date = searchParams.get('date');
     const roomId = searchParams.get('roomId');
     const userId = searchParams.get('userId');
+    const status = searchParams.get('status');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '100');
 
@@ -36,6 +40,10 @@ export async function GET(request: Request) {
 
     if (roomId) {
       conditions.push(eq(bookingsTable.roomId, roomId));
+    }
+
+    if (status && validStatuses.includes(status as BookingStatus)) {
+      conditions.push(eq(bookingsTable.status, status as BookingStatus));
     }
 
     if (!isAdmin || userId) {

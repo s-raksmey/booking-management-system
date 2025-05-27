@@ -12,11 +12,8 @@ import { LogoutConfirmationDialog } from '../ui/confirm-message';
 import { Hotel, CalendarCheck, Clock, LogOut, Menu, X, Moon, Sun, ArrowLeft, Home, UserCog, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { redirect } from 'next/navigation';
-import { RoomsManagement } from '../room/room-management';
-
-function BookingsManagement() {
-  return <div>Bookings Management Placeholder</div>;
-}
+import { RoomsManagement } from '../room/RoomManagement';
+import { BookingsManagement } from '../booking/BookingManagement';
 
 function BookingHistory() {
   return <div>Booking History Placeholder</div>;
@@ -121,7 +118,7 @@ export function AdminDashboard() {
 
   const navItems = [
     { id: 'rooms', icon: Hotel, label: 'Rooms Management' },
-    { id: 'bookings', icon: CalendarCheck, label: 'Current Bookings' },
+    { id: 'bookings', icon: CalendarCheck, label: 'Bookings Management' },
     { id: 'history', icon: Clock, label: 'Booking History' },
   ];
 

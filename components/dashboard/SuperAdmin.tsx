@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { UsersTable } from '../user/users-table';
-import { SystemConfigForm } from './system-config';
+import { SystemConfigForm } from './SystemConfig';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { LogOut, Loader2, Settings, LayoutDashboard, Menu, X, Moon, Sun, ArrowLeft, Home, UserCog } from 'lucide-react';

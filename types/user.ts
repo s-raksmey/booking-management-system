@@ -12,6 +12,17 @@ export type User = {
   updatedAt: Date;
 };
 
+export interface NotificationConfig {
+  id: string;
+  userId: string;
+  emailEnabled: boolean;
+  smsEnabled: boolean;
+  telegramEnabled: boolean;
+  telegramChatId?: string | null;
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface CreateUserInput {
   name: string;
   email: string;
@@ -67,6 +78,7 @@ export interface UserSession {
     email: string;
     phoneNumber?: string;
     role: UserRole;
+    notificationConfig?: NotificationConfig;
   };
 }
 
@@ -76,6 +88,7 @@ export interface TokenSet {
   email?: string;
   phoneNumber?: string;
   role?: UserRole;
+  notificationConfig?: NotificationConfig;
   [key: string]: any;
 }
 

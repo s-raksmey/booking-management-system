@@ -35,3 +35,14 @@ export interface UpdateBookingInput {
   purpose?: string;
   status?: BookingStatus;
 }
+
+export interface BookingWithRoomAndUser {
+  id: string;
+  roomName: string;
+  userName: string;
+  userEmail: string;
+  startTime: number;
+  endTime: number;
+  status: 'APPROVED' | 'PENDING' | 'REJECTED' | 'CANCELLED';
+  createdAt: number;
+}

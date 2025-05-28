@@ -14,10 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { redirect } from 'next/navigation';
 import { RoomsManagement } from '../room/RoomManagement';
 import { BookingsManagement } from '../booking/BookingManagement';
-
-function BookingHistory() {
-  return <div>Booking History Placeholder</div>;
-}
+import BookingHistory from '../booking/BookingHistory';
 
 export function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('rooms');

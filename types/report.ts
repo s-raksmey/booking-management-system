@@ -18,6 +18,7 @@ export interface BookingReport {
 }
 
 export interface BookingReportQuery {
+  roomName: any;
   startDate?: string | null;
   endDate?: string | null;
   roomId?: string | null;

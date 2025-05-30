@@ -9,14 +9,14 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import { LogoutConfirmationDialog } from '../ui/confirm-message';
-import { Hotel, CalendarCheck, Clock, LogOut, Menu, X, Moon, Sun, ArrowLeft, Home, UserCog, Loader2, FileText } from 'lucide-react';
+import { Hotel, CalendarCheck, Clock, LogOut, Menu, X, Moon, Sun, ArrowLeft, Home, UserCog, Loader2, FileText, Bell } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { redirect } from 'next/navigation';
 import { RoomsManagement } from '../room/RoomManagement';
 import { BookingsManagement } from '../booking/BookingManagement';
 import BookingHistory from '../booking/BookingHistory';
 import { ReportGeneration } from '../report/BookingReport';
-
+import NotificationSettings from '../notifications/Notifications'; // Import the NotificationSettings component
 
 export function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('rooms');
@@ -119,7 +119,8 @@ export function AdminDashboard() {
     { id: 'rooms', icon: Hotel, label: 'Rooms Management' },
     { id: 'bookings', icon: CalendarCheck, label: 'Bookings Management' },
     { id: 'history', icon: Clock, label: 'Booking History' },
-    { id: 'reports', icon: FileText, label: 'Report Generation' }, // New nav item
+    { id: 'reports', icon: FileText, label: 'Report Generation' },
+    { id: 'notifications', icon: Bell, label: 'Notification Settings' }, // New nav item for notifications
   ];
 
   const renderContent = () => {
@@ -156,6 +157,8 @@ export function AdminDashboard() {
         return <BookingHistory />;
       case 'reports':
         return <ReportGeneration />;
+      case 'notifications':
+        return <NotificationSettings />;
       default:
         return <RoomsManagement />;
     }

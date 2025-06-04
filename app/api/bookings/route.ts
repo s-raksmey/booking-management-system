@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { bookings as bookingsTable, rooms as roomsTable, users as usersTable, recurringBookings } from '@/db/schema';
-import { and, eq, gte, lte, or, sql } from 'drizzle-orm';
+import { and, eq, gte, lte, or, sql, inArray } from 'drizzle-orm'; // Added inArray
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-option';
 import { Booking, CreateBookingInput } from '@/types/booking';
@@ -46,10 +46,16 @@ export async function GET(request: Request) {
       conditions.push(eq(bookingsTable.status, status as BookingStatus));
     }
 
-    if (!isAdmin || userId) {
-      const targetUserId = isAdmin && userId ? userId : session.user.id;
-      conditions.push(eq(bookingsTable.userId, targetUserId));
+    // Modified logic:
+    // If not an admin, always filter by the current user's ID.
+    // If an admin and a specific userId is provided, filter by that userId.
+    // If an admin and no userId is provided, do not filter by userId (allowing them to see all bookings).
+    if (!isAdmin) {
+      conditions.push(eq(bookingsTable.userId, session.user.id));
+    } else if (userId) {
+      conditions.push(eq(bookingsTable.userId, userId));
     }
+
 
     const query = db
       .select({
@@ -111,6 +117,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: false, error: 'Failed to fetch bookings' }, { status: 500 });
   }
 }
+
 
 export async function POST(request: Request) {
   try {
@@ -212,11 +219,31 @@ export async function POST(request: Request) {
       updatedAt: Number(newBooking.updatedAt),
     };
 
+    // Notify the user who made the booking
     await sendNotification({
       userId: session.user.id,
       message: `Booking for room "${room.name}" has been ${room.autoApprove ? 'created' : 'requested'}.`,
       type: room.autoApprove ? 'BOOKING_APPROVED' : 'BOOKING_REQUEST',
     });
+
+    // If the user is STAFF and the booking is pending, notify admins
+    if (session.user.role === 'STAFF' && newBooking.status === 'PENDING') {
+        const adminUsers = await db
+            .select({ id: usersTable.id })
+            .from(usersTable)
+            .where(inArray(usersTable.role, ['ADMIN', 'SUPER_ADMIN']));
+
+        const notificationMessage = `Staff member "${session.user.name}" has requested a booking for room "${room.name}" from ${new Date(startTime).toLocaleString()} to ${new Date(endTime).toLocaleString()}.`;
+
+        for (const admin of adminUsers) {
+            await sendNotification({
+                userId: admin.id,
+                message: notificationMessage,
+                type: 'NEW_BOOKING_REQUEST', // You might want to define a new notification type
+            });
+        }
+    }
+
 
     return NextResponse.json({
       success: true,

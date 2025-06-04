@@ -13,7 +13,7 @@ export function useBookings(page: number, limit: number = 10) {
   const fetchBookings = async (retries = 2): Promise<void> => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/booking?page=${page}&limit=${limit}&status=PENDING`);
+      const response = await fetch(`/api/bookings?page=${page}&limit=${limit}&status=PENDING`);
       if (!response.ok) {
         if (response.status === 401) {
           setError('Please log in to view bookings');
@@ -77,7 +77,7 @@ export function useBookings(page: number, limit: number = 10) {
 
   const approveRejectBooking = async (booking: Booking, status: 'APPROVED' | 'REJECTED') => {
     try {
-      const response = await fetch(`/api/booking/${booking.id}`, {
+      const response = await fetch(`/api/bookings/${booking.id}`, { // Corrected endpoint
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -96,7 +96,7 @@ export function useBookings(page: number, limit: number = 10) {
 
   const cancelBooking = async (id: string) => {
     try {
-      const response = await fetch(`/api/booking/${id}`, {
+      const response = await fetch(`/api/bookings/${id}`, { // Corrected endpoint
         method: 'DELETE',
       });
       const result = await response.json();
@@ -121,6 +121,7 @@ export function useBookings(page: number, limit: number = 10) {
       const result = await response.json();
       if (result.success) {
         toast.success(result.data.message);
+        // Suspending a room might affect pending bookings, so refetch
         await fetchBookings();
       } else {
         toast.error(result.error || 'Failed to suspend room');
@@ -145,6 +146,7 @@ export function useBookings(page: number, limit: number = 10) {
       const result = await response.json();
       if (result.success) {
         toast.success('Time slot restrictions updated');
+        // Restrictions might affect future bookings, no need to refetch current list
       } else {
         toast.error(result.error || 'Failed to set restrictions');
       }
@@ -152,6 +154,37 @@ export function useBookings(page: number, limit: number = 10) {
       toast.error('Failed to set restrictions');
     }
   };
+
+  const modifyBooking = async (
+    id: string,
+    data: {
+      startTime?: number;
+      endTime?: number;
+      purpose?: string;
+      equipment?: string[];
+    }
+  ) => {
+    try {
+      const response = await fetch(`/api/bookings/${id}`, { // Corrected endpoint
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (result.success) {
+        toast.success('Booking modified successfully');
+        await fetchBookings(); // Refetch bookings to show updated data
+        return true; // Indicate success
+      } else {
+        toast.error(result.error || 'Failed to modify booking');
+        return false; // Indicate failure
+      }
+    } catch {
+      toast.error('Failed to modify booking');
+      return false; // Indicate failure
+    }
+  };
+
 
   useEffect(() => {
     fetchBookings();
@@ -169,5 +202,6 @@ export function useBookings(page: number, limit: number = 10) {
     cancelBooking,
     suspendRoom,
     setTimeRestrictions,
+    modifyBooking, // Export the new function
   };
 }

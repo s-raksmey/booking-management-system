@@ -20,7 +20,18 @@ export function BookingsManagement() {
   const [isRestrictionsModalOpen, setIsRestrictionsModalOpen] = useState(false);
   const [currentBooking, setCurrentBooking] = useState<Booking | null>(null);
   const [currentRoom, setCurrentRoom] = useState<Room | null>(null);
-  const { bookings, rooms, loading, error, totalPages, approveRejectBooking, cancelBooking, suspendRoom, setTimeRestrictions } = useBookings(page);
+  const {
+    bookings,
+    rooms,
+    loading,
+    error,
+    totalPages,
+    approveRejectBooking,
+    cancelBooking,
+    suspendRoom,
+    setTimeRestrictions,
+    modifyBooking, // Import the new function
+  } = useBookings(page);
 
   const handleModifyBooking = async (data: {
     startTime?: number;
@@ -29,20 +40,13 @@ export function BookingsManagement() {
     equipment?: string[];
   }) => {
     if (!currentBooking) return;
-    try {
-      const response = await fetch(`/api/booking/${currentBooking.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const result = await response.json();
-      if (result.success) {
-        setIsModifyModalOpen(false);
-        setCurrentBooking(null);
-      }
-    } catch {
-      // Error handling is managed by useBookings hook
+    // Use the modifyBooking function from the hook
+    const success = await modifyBooking(currentBooking.id, data);
+    if (success) {
+      setIsModifyModalOpen(false);
+      setCurrentBooking(null);
     }
+    // Error handling and toast messages are now managed within the hook
   };
 
   return (
